@@ -1,0 +1,57 @@
+version: '3'
+
+networks:
+  econnect-net:
+    driver: bridge
+
+services:
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - '9411:9411'
+    networks:
+      - econnect-net
+
+  cache:
+    image: redis:6.2-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - './data/redis/data:/data'
+    networks:
+      - econnect-net
+
+  administer:
+    image: pandaind/ecom-admin-server
+    ports:
+      - '9090:9090'
+    environment:
+      DEBUG: false
+    networks:
+      - econnect-net
+
+  service-register:
+    image: pandaind/ecom-service-register
+    ports:
+      - '8761:8761'
+    environment:
+      BOOT_ADMIN_URL: http://administer:9090
+      DEBUG: false
+    depends_on:
+      - administer
+    networks:
+      - econnect-net
+
+  config-server:
+    image: pandaind/ecom-config-server
+    ports:
+      - '8888:8888'
+    environment:
+      GIT_REPOSITORY_URL: https://github.com/pandaind/ecom-configs
+      DEBUG: false
+      KAFKA_SERVERS_URLS: kafka1:19091
+    depends_on:
+      - service-register
+      - administer
+    networks:
+      - econnect-net

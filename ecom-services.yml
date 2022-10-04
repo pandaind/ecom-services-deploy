@@ -1,0 +1,140 @@
+version: '3'
+
+networks:
+  econnect-net:
+    driver: bridge
+
+services:
+  gateway-service:
+    image: pandaind/ecom-gateway-service
+    ports:
+      - '8080:8080'
+    environment:
+      DEBUG: false
+      EUREKA_URL: http://service-register:8761/eureka
+      BOOT_ADMIN_URL: http://administer:9090
+      CONFIG_SERVER: http://config-server:8888
+      KAFKA_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_CONSUMER_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_PRODUCER_BOOTSTRAP_SERVER: kafka1:19091
+    depends_on:
+      - service-register
+      - administer
+      - config-server
+    networks:
+      - econnect-net
+
+
+  order-service:
+    image: pandaind/ecom-order-service
+    environment:
+      EUREKA_URL: http://service-register:8761/eureka
+      DEBUG: false
+      BOOT_ADMIN_URL: http://administer:9090
+      KAFKA_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_CONSUMER_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_PRODUCER_BOOTSTRAP_SERVER: kafka1:19091
+      ZIPKIN_URL: zipkin:9411
+      CONFIG_SERVER: http://config-server:8888
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+    depends_on:
+      - service-register
+      - administer
+      - config-server
+      - cache
+    networks:
+      - econnect-net
+
+
+  product-service:
+    image: pandaind/ecom-product-service
+    environment:
+      DEBUG: false
+      EUREKA_URL: http://service-register:8761/eureka
+      BOOT_ADMIN_URL: http://administer:9090
+      KAFKA_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_CONSUMER_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_PRODUCER_BOOTSTRAP_SERVER: kafka1:19091
+      ZIPKIN_URL: zipkin:9411
+      CONFIG_SERVER: http://config-server:8888
+    depends_on:
+      - service-register
+      - administer
+      - config-server
+    networks:
+      - econnect-net
+
+
+  shipment-service:
+    image: pandaind/ecom-shipment-service
+    environment:
+      EUREKA_URL: http://service-register:8761/eureka
+      DEBUG: false
+      BOOT_ADMIN_URL: http://administer:9090
+      KAFKA_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_CONSUMER_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_PRODUCER_BOOTSTRAP_SERVER: kafka1:19091
+      ZIPKIN_URL: zipkin:9411
+      CONFIG_SERVER: http://config-server:8888
+    depends_on:
+      - service-register
+      - administer
+      - config-server
+    networks:
+      - econnect-net
+
+
+  inventory-service:
+    image: pandaind/ecom-inventory-service
+    environment:
+      EUREKA_URL: http://service-register:8761/eureka
+      DEBUG: false
+      BOOT_ADMIN_URL: http://administer:9090
+      KAFKA_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_CONSUMER_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_PRODUCER_BOOTSTRAP_SERVER: kafka1:19091
+      ZIPKIN_URL: zipkin:9411
+      CONFIG_SERVER: http://config-server:8888
+    depends_on:
+      - service-register
+      - administer
+      - config-server
+    networks:
+      - econnect-net
+
+  user-service:
+    image: pandaind/ecom-user-service
+    environment:
+      EUREKA_URL: http://service-register:8761/eureka
+      DEBUG: false
+      BOOT_ADMIN_URL: http://administer:9090
+      KAFKA_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_CONSUMER_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_PRODUCER_BOOTSTRAP_SERVER: kafka1:19091
+      ZIPKIN_URL: zipkin:9411
+      CONFIG_SERVER: http://config-server:8888
+    depends_on:
+      - service-register
+      - administer
+      - config-server
+    networks:
+      - econnect-net
+
+  notification-service:
+    image: pandaind/ecom-notification-service
+    environment:
+      EUREKA_URL: http://service-register:8761/eureka
+      DEBUG: false
+      BOOT_ADMIN_URL: http://administer:9090
+      KAFKA_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_CONSUMER_BOOTSTRAP_SERVER: kafka1:19091
+      KAFKA_PRODUCER_BOOTSTRAP_SERVER: kafka1:19091
+      ZIPKIN_URL: zipkin:9411
+      CONFIG_SERVER: http://config-server:8888
+    depends_on:
+      - service-register
+      - administer
+      - config-server
+    networks:
+      - econnect-net
